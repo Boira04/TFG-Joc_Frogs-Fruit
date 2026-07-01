@@ -1,11 +1,12 @@
+// ThwompBehaviour.cs
+// Enemic Thwomp que cau verticalment quan detecta el jugador al seu rang horitzontal i torna a pujar a la posicio inicial despres dun breu impacte
 using UnityEngine;
-
 public class ThwompBehaviour : MonoBehaviour
 {
     public float fallSpeed = 10f;
     public float riseSpeed = 3f;
     public float detectionRange = 5f;
-    public AudioClip impactSound; // Nou camp
+    public AudioClip impactSound;
     private Rigidbody2D rb2D;
     private Animator animator;
     private Vector3 startPosition;
@@ -29,28 +30,15 @@ public class ThwompBehaviour : MonoBehaviour
         {
             case State.Idle:
                 blinkTimer += Time.deltaTime;
-                if (blinkTimer >= blinkInterval)
-                {
-                    blinkTimer = 0f;
-                    StartCoroutine(BlinkAnimation());
-                }
-                float distanceX = Mathf.Abs(player.position.x - transform.position.x);
-                if (distanceX < detectionRange)
-                {
-                    currentState = State.Falling;
-                }
+                if (blinkTimer >= blinkInterval) { blinkTimer = 0f; StartCoroutine(BlinkAnimation()); }
+                if (Mathf.Abs(player.position.x - transform.position.x) < detectionRange) currentState = State.Falling;
                 break;
             case State.Falling:
                 rb2D.linearVelocity = new Vector2(0, -fallSpeed);
                 break;
             case State.Rising:
                 rb2D.linearVelocity = new Vector2(0, riseSpeed);
-                if (transform.position.y >= startPosition.y)
-                {
-                    rb2D.linearVelocity = Vector2.zero;
-                    transform.position = startPosition;
-                    currentState = State.Idle;
-                }
+                if (transform.position.y >= startPosition.y) { rb2D.linearVelocity = Vector2.zero; transform.position = startPosition; currentState = State.Idle; }
                 break;
         }
     }
@@ -69,20 +57,13 @@ public class ThwompBehaviour : MonoBehaviour
             rb2D.linearVelocity = Vector2.zero;
             animator.SetBool("BottomHit", true);
             currentState = State.HitGround;
-
-            if (impactSound != null)
-            {
-                AudioSource.PlayClipAtPoint(impactSound, transform.position);
-            }
-
+            if (impactSound != null) AudioSource.PlayClipAtPoint(impactSound, transform.position);
             StartCoroutine(RiseUp());
         }
-
         if (collision.gameObject.CompareTag("Player"))
         {
             PlayerMove player = collision.gameObject.GetComponent<PlayerMove>();
-            if (player != null && !player.isDead)
-                player.Die();
+            if (player != null && !player.isDead) player.Die();
         }
     }
 

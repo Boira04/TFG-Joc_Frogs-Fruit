@@ -1,6 +1,7 @@
+// MenuSystem.cs
+// Gestiona els botons del menu principal: Play reseteja tot lestat del joci carrega el primer nivell; Exit tanca laplicacio
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 public class MenuSystem : MonoBehaviour
 {
     public void Play()
@@ -8,17 +9,13 @@ public class MenuSystem : MonoBehaviour
         LifeManager.lives = 3;
         RespawnManager.respawnPoints.Clear();
         RespawnManager.lastCheckpointID = "";
-        GameManager.ResetFruits(); // reseteja les fruites
-        GameManager.ResetEnemies(); // reseteja els enemics
+        GameManager.ResetFruits();
+        GameManager.ResetEnemies();
         GameManager.hasShootPower = false;
-        TimerManager.currentTime = -1f; // reseteja el temps
+        GameManager.bossHitPoints = -1f;
+        TimerManager.currentTime = -1f;
         SceneManager.LoadScene(1);
-        //Debug.Log("Respawn points count: " + RespawnManager.respawnPoints.Count);
-        //Debug.Log("LastCheckpointID: " + RespawnManager.lastCheckpointID);
     }
 
-    public void Exit()
-    {
-        Application.Quit();
-    }
+    public void Exit() => Application.Quit();
 }

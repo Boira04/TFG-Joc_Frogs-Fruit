@@ -1,10 +1,12 @@
+// EnemyFollowPlayer.cs
+// Fa que l'enemic persegueixi el jugador quan entra al seu rang de visió (lineOfSite)
+// Reprodueix un so de detecció la primera vegada que el jugador entra al rang
 using UnityEngine;
-
 public class EnemyFollowPlayer : MonoBehaviour
 {
     public float speed;
     public float lineOfSite;
-    public AudioClip detectSound; // Nou camp
+    public AudioClip detectSound;
     private Transform player;
     private Animator animator;
     public bool canMove = true;
@@ -24,18 +26,11 @@ public class EnemyFollowPlayer : MonoBehaviour
             if (!playerDetected)
             {
                 playerDetected = true;
-                if (detectSound != null)
-                {
-                    AudioSource.PlayClipAtPoint(detectSound, transform.position);
-                }
+                if (detectSound != null) AudioSource.PlayClipAtPoint(detectSound, transform.position);
             }
-
             transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
             animator.SetBool("Run", true);
-            if (player.position.x < transform.position.x)
-                transform.localScale = new Vector3(-1, 1, 1);
-            else
-                transform.localScale = new Vector3(1, 1, 1);
+            transform.localScale = player.position.x < transform.position.x ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
         }
         else
         {

@@ -1,7 +1,9 @@
+// RespawnManager.cs
+// Guarda els punts de respawn per a cada escena (index a posicio)
+// En carregar una escena, coloca el jugador al punt guardat si nhi ha un
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-
 public class RespawnManager : MonoBehaviour
 {
     public static Dictionary<int, Vector3> respawnPoints = new Dictionary<int, Vector3>();
@@ -10,7 +12,6 @@ public class RespawnManager : MonoBehaviour
     void Start()
     {
         int currentScene = SceneManager.GetActiveScene().buildIndex;
-        
         if (respawnPoints.ContainsKey(currentScene))
         {
             GameObject player = GameObject.FindWithTag("Player");

@@ -1,3 +1,6 @@
+// ProjectileBehaviour.cs
+// Projectil del jugador que es mou en linia recta (esquerra o dreta)
+// Ignora la colisio amb el propi jugador i es destrueix en tocar qualsevol obstacle
 using UnityEngine;
 public class ProjectileBehaviour : MonoBehaviour
 {
@@ -7,19 +10,13 @@ public class ProjectileBehaviour : MonoBehaviour
     void Start()
     {
         GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
-            Physics2D.IgnoreCollision(GetComponent<Collider2D>(), player.GetComponent<Collider2D>());
-    }
-    void Update()
-    {
-        if (goingRight)
-            transform.position += Vector3.right * Speed * Time.deltaTime;
-        else
-            transform.position += Vector3.left * Speed * Time.deltaTime;
+        if (player != null) Physics2D.IgnoreCollision(GetComponent<Collider2D>(), player.GetComponent<Collider2D>());
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void Update()
     {
-        Destroy(gameObject);
+        transform.position += (goingRight ? Vector3.right : Vector3.left) * Speed * Time.deltaTime;
     }
+
+    private void OnCollisionEnter2D(Collision2D collision) => Destroy(gameObject);
 }

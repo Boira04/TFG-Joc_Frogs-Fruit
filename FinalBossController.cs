@@ -86,7 +86,7 @@ public class FinalBossController : MonoBehaviour, IDamageable
 
             if (currentEnemies >= maxSpawnedEnemies)
             {
-                // Només pot fer l'atac 1 o 3 si hi ha el màxim d'enemics vius
+                // Nomes pot fer latac 1 o 3 si hi ha el maxim denemics vius
                 attackIndex = Random.Range(0, 2) == 0 ? 1 : 3;
             }
             else
@@ -118,9 +118,9 @@ public class FinalBossController : MonoBehaviour, IDamageable
     {
         switch (index)
         {
-            case 1: return 1.5f; // Ajusta segons la durada real de Attack1
-            case 2: return 1.5f; // Ajusta segons la durada real de Attack2
-            case 3: return 1f;   // Ajusta segons la durada real de Walk/Embestida
+            case 1: return 1.5f;
+            case 2: return 1.5f;
+            case 3: return 1f;
             default: return 1f;
         }
     }
@@ -167,7 +167,7 @@ public class FinalBossController : MonoBehaviour, IDamageable
             Destroy(bullet.gameObject);
         }
 
-        // Opcional: també destruir els maskdudes ja spawnejats
+        // Opcional: tambe destruir els maskdudes ja spawnejats
         GameObject[] spawnedEnemies = GameObject.FindGameObjectsWithTag(spawnedEnemyTag);
         foreach (GameObject enemy in spawnedEnemies)
         {
@@ -188,7 +188,7 @@ public class FinalBossController : MonoBehaviour, IDamageable
         if (fireworksPrefab != null)
             Instantiate(fireworksPrefab, fireworksPosition, Quaternion.identity);
 
-        // Amaguem el boss en lloc de destruir-lo, perquè la corrutina pugui continuar
+        // Amaguem el boss en lloc de destruir-lo, perque la corrutina pugui continuar
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Collider2D>().enabled = false;
 
@@ -229,7 +229,7 @@ public class FinalBossController : MonoBehaviour, IDamageable
 
         // Compta quants MaskDudes spawnejats hi ha vius
         int currentEnemies = GameObject.FindGameObjectsWithTag(spawnedEnemyTag).Length;
-        if (currentEnemies >= maxSpawnedEnemies) return; // No dispara si ja hi ha el màxim
+        if (currentEnemies >= maxSpawnedEnemies) return; // No dispara si ja hi ha el maxim
 
         Vector3 spawnPos = parabolicSpawnPoint != null ? parabolicSpawnPoint.position : transform.position;
         GameObject b = Instantiate(parabolicBulletPrefab, spawnPos, Quaternion.identity);
@@ -245,68 +245,12 @@ public class FinalBossController : MonoBehaviour, IDamageable
     //---ATAC 2: Bala parabola---
 
     //---ATAC 3: Embestida---
-    /*private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Projectile") && !isDead)
-        {
-            hitPoints--;
-            GameManager.bossHitPoints = hitPoints; // guarda la vida del boss al GameManager
-            GetComponentInChildren<HealthBarBehaviour>()?.ShowBar(); // per a veure la healthbar del inal boss quan aquest rebi mal
-            animator.SetBool("Hit", true);
-            canAttack = false;
-            StartCoroutine(ResetHit());
-
-            if (hitPoints <= 0)
-            {
-                Die();
-            }
-        }
-
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            PlayerMove player = collision.gameObject.GetComponent<PlayerMove>();
-            if (player != null && !player.isDead)
-            {
-                player.Die();
-            }
-
-            Physics2D.IgnoreCollision(collision.collider, GetComponent<Collider2D>(), true);
-            StartCoroutine(ReEnableCollisionWithPlayer(collision.collider));
-        }
-
-        if (collision.gameObject.CompareTag("Projectile") && !isDead && !isInvulnerable)
-        {
-            // No interromp l'atac si està executant-se
-            bool isAttacking = animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") ||
-                            animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") ||
-                            animator.GetCurrentAnimatorStateInfo(0).IsName("Walk");
-
-            hitPoints--;
-            GameManager.bossHitPoints = hitPoints;
-            GetComponentInChildren<HealthBarBehaviour>()?.ShowBar();
-
-            if (!isAttacking)
-            {
-                animator.SetBool("Hit", true);
-                StartCoroutine(ResetHit());
-            }
-
-            canAttack = false;
-            StartCoroutine(ResetHit());
-
-            if (hitPoints <= 0)
-            {
-                GameManager.bossHitPoints = -1f;
-                Die();
-            }
-        }
-    }*/
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 1. PROJECTIL DEL JUGADOR
         if (collision.gameObject.CompareTag("Projectile") && !isDead && !isInvulnerable)
         {
-            // Mirem si l'Animator està reproduint algun dels 3 estats d'atac
+            // Mirem si lAnimator esta reproduint algun dels 3 estats datac
             bool isAttacking = animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") ||
                             animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") ||
                             animator.GetCurrentAnimatorStateInfo(0).IsName("Walk");
@@ -315,7 +259,6 @@ public class FinalBossController : MonoBehaviour, IDamageable
             GameManager.bossHitPoints = hitPoints; 
             GetComponentInChildren<HealthBarBehaviour>()?.ShowBar(); 
 
-            // Només fem tremolar/parar el boss si NO estava atacant
             if (!isAttacking)
             {
                 animator.SetBool("Hit", true);
@@ -375,8 +318,8 @@ public class FinalBossController : MonoBehaviour, IDamageable
     }
     //---ATAC 3: Embestida---
 
-    // Funcions de la interfície IDamageable
+    // Funcions de la interficie IDamageable
     public float GetHitPoints() => hitPoints;
     public float GetMaxHitPoints() => maxHitPoints;
-    // Funcions de la interfície IDamageable
+    // Funcions de la interficie IDamageable
 }

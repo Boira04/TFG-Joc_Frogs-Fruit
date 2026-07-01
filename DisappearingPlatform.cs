@@ -1,10 +1,12 @@
+// DisappearingPlatform.cs
+// Plataforma que desapareix uns instants despres de ser trepitjada pel jugador
+// Nomes es desactiva si el jugador la toca per dalt (comprova la normal del contacte)
 using System.Collections;
 using UnityEngine;
-
 public class DisappearingPlatform : MonoBehaviour
 {
-    public float delayBeforeOff = 0.5f;
-    public float timeToRespawn = 2f;
+    public float delayBeforeOff = 0.5f; // Temps fins que desapareix
+    public float timeToRespawn = 2f;    // Temps fins que reapareix
     private Animator animator;
     private Collider2D col;
     private bool isDisappearing = false;
@@ -20,14 +22,10 @@ public class DisappearingPlatform : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player") && !isDisappearing)
         {
-            // Comprova si el contacte és des de dalt
             foreach (ContactPoint2D contact in collision.contacts)
             {
-                if (contact.normal.y < -0.5f)
-                {
-                    StartCoroutine(DisappearRoutine());
-                    break;
-                }
+                // Comprova que el contacte és des de dalt (normal apunta cap avall)
+                if (contact.normal.y < -0.5f) { StartCoroutine(DisappearRoutine()); break; }
             }
         }
     }
@@ -35,14 +33,10 @@ public class DisappearingPlatform : MonoBehaviour
     IEnumerator DisappearRoutine()
     {
         isDisappearing = true;
-
         yield return new WaitForSeconds(delayBeforeOff);
-
         animator.SetBool("isOn", false);
-        col.isTrigger = true;
-
+        col.isTrigger = true; // El jugador ja pot travessar la plataforma
         yield return new WaitForSeconds(timeToRespawn);
-
         col.isTrigger = false;
         animator.SetBool("isOn", true);
         isDisappearing = false;

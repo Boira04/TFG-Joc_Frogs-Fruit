@@ -1,9 +1,14 @@
+// EnemyBehaviour.cs
+// Gestiona la vida i les col·lisions dels enemics normals
+// Implementa IDamageable per compatibilitat amb HealthBarBehaviour
+// Si enemyID és buit, l'enemic és temporal i no guarda estat al GameManager
 using UnityEngine;
 public class EnemyBehaviour : MonoBehaviour, IDamageable
 {
     public float hitPoints;
     public float maxHitPoints = 5;
-    public string enemyID;
+    public string enemyID; // ID unic per a cada enemic; buit = enemic temporal (spawnejat pel boss)
+    public AudioClip deathSound;
     private Animator animator;
     private bool isInvulnerable = false;
     private EnemyFollowPlayer enemyFollow;
@@ -13,17 +18,11 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
         hitPoints = maxHitPoints;
         animator = GetComponent<Animator>();
         enemyFollow = GetComponent<EnemyFollowPlayer>();
-
-        if (string.IsNullOrEmpty(enemyID)) return; // Enemic temporal, no guarda/recupera estat (per al final boss)
-
+        if (string.IsNullOrEmpty(enemyID)) return;
         var state = GameManager.GetEnemyState(enemyID);
         if (state.HasValue)
         {
-            if (state.Value.hitPoints <= 0)
-            {
-                Destroy(gameObject);
-                return;
-            }
+            if (state.Value.hitPoints <= 0) { Destroy(gameObject); return; }
             hitPoints = state.Value.hitPoints;
             transform.position = state.Value.position;
         }
@@ -31,7 +30,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 
     void SaveState()
     {
-        if (string.IsNullOrEmpty(enemyID)) return; // Enemic temporal, no guarda/recupera estat (per al final boss)
+        if (string.IsNullOrEmpty(enemyID)) return;
         GameManager.SaveEnemy(enemyID, hitPoints, transform.position);
     }
 
@@ -41,30 +40,23 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
         {
             hitPoints--;
             SaveState();
-            GetComponentInChildren<HealthBarBehaviour>()?.ShowBar(); // Mostra la barra de vida quan rep dany
+            GetComponentInChildren<HealthBarBehaviour>()?.ShowBar();
             animator.SetBool("Hit", true);
             StartCoroutine(ResetHit());
-            
             if (hitPoints <= 0)
             {
-                if (!string.IsNullOrEmpty(enemyID))
-                {
-                    GameManager.SaveEnemy(enemyID, 0, transform.position);
-                }
+                if (!string.IsNullOrEmpty(enemyID)) GameManager.SaveEnemy(enemyID, 0, transform.position);
                 Destroy(gameObject);
             }
         }
-
         if (collision.gameObject.CompareTag("Player"))
         {
             PlayerMove player = collision.gameObject.GetComponent<PlayerMove>();
             Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-
             if (player != null && !player.isDead)
             {
                 float diff = collision.transform.position.y - transform.position.y;
                 bool jumpedOnTop = diff > 0.15f;
-
                 if (jumpedOnTop && !isInvulnerable)
                 {
                     hitPoints--;
@@ -74,13 +66,9 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
                     StartCoroutine(ResetHit());
                     playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 3f);
                     StartCoroutine(ReEnableCollision(collision.collider));
-                    
                     if (hitPoints <= 0)
                     {
-                        if (!string.IsNullOrEmpty(enemyID))
-                        {
-                            GameManager.SaveEnemy(enemyID, 0, transform.position);
-                        }
+                        if (!string.IsNullOrEmpty(enemyID)) GameManager.SaveEnemy(enemyID, 0, transform.position);
                         Destroy(gameObject);
                     }
                 }
@@ -101,7 +89,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
         animator.SetBool("Hit", false);
         isInvulnerable = false;
         enemyFollow.canMove = true;
-        enemyFollow.speed += 0.5f;
+        enemyFollow.speed += 0.5f; // enemic saccelera lleugerament cada cop que rep un cop
     }
 
     System.Collections.IEnumerator ReEnableCollision(Collider2D playerCollider)
@@ -110,6 +98,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(0.5f);
         Physics2D.IgnoreCollision(playerCollider, GetComponent<Collider2D>(), false);
     }
+
     public float GetHitPoints() => hitPoints;
     public float GetMaxHitPoints() => maxHitPoints;
 }

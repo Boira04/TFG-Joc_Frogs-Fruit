@@ -18,18 +18,18 @@ public class PlayerMove : MonoBehaviour
     //public Vector2 groundCheckSize = new Vector2(0.5f, 0.05f);
     //public LayerMask groundLayer;
     
-    public float fallMultiplier = 2.5f;   // fa caure més ràpid
-    public float lowJumpMultiplier = 2f;  // talla el salt si soltes el botó
+    public float fallMultiplier = 2.5f;   // fa caure mes rapid
+    public float lowJumpMultiplier = 2f;  // talla el salt si soltes el boto
     Rigidbody2D rb2D;
     bool jumpHeld;
-    public SpriteRenderer spriteRenderer; //publica per a dirli des de l'inspector que és el sprite renderer del jugador
-    public Animator animator; //publica per a dirli des de l'inspector que és el animator del jugador
+    public SpriteRenderer spriteRenderer; //publica per a dirli des de linspector que es el sprite renderer del jugador
+    public Animator animator; //publica per a dirli des de linspector que es el animator del jugador
     bool isTouchingFront = false;
     bool isWallSliding;
     public float wallSlideSpeed = 0.75f;
     bool isTouchingRight;
     bool isTouchingLeft;
-    private string lastWallJumped = ""; // guarda quina paret has saltat per última vegada
+    private string lastWallJumped = ""; // guarda quina paret has saltat per ultima vegada
     //---Sons de salt---
     public AudioClip jumpSound;
     public AudioClip doubleJumpSound;
@@ -55,7 +55,7 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDead) return; // Si està mort, no fa res
+        if (isDead) return; // Si esta mort, no fa res
 
         //---Moviment horitzontal---
         if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed)
@@ -256,7 +256,7 @@ public class PlayerMove : MonoBehaviour
             GameManager.ResetEnemies(); // reseteja els enemics
             GameManager.hasShootPower = false; // reseteja el poder de disparar
             GameManager.bossHitPoints = -1f; // reseteja la vida del boss
-            SceneManager.LoadScene(0); // torna al menú
+            SceneManager.LoadScene(0); // torna al menu
         }
         else
         {
